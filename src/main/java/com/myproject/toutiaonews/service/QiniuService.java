@@ -23,18 +23,18 @@ public class QiniuService {
 
     private static final Logger logger = LoggerFactory.getLogger(QiniuService.class);
 
-    // 首相要申请一个七牛云账号
+    // 首先要申请一个七牛云账号
     // 设置好账号的ACCESS_KEY和SECRET_KEY
-    String ACCESS_KEY = "";
-    String SECRET_KEY = "";
+    String ACCESS_KEY = "EWPoX6zGtvxEHiwzSL2KyyflCnVZ-NTvhtTcvgLU";
+    String SECRET_KEY = "rfcagkeBuhsxLLQID1ui6eYDaqS7vncV-JFp0Ffq";
     // 要上传的空间
-    String bucketname = "";
+    String bucketname = "bucket_ray";
     // 密钥配置
     Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
     // 创建要上传的对象
     UploadManager uploadManager = new UploadManager();
 
-    private static String QINIU_IMAGE_DOMAIN = "";
+    private static String QINIU_IMAGE_DOMAIN = "http://pst94snkp.bkt.clouddn.com/";  // 展示图片用固定域名
 
     // 简单上传，使用默认策略，只需要设置上传的空间名就可以了
     public String getUpToken() {

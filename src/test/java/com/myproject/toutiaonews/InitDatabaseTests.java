@@ -1,8 +1,11 @@
 package com.myproject.toutiaonews;
 
+import com.myproject.toutiaonews.dao.CommentDAO;
 import com.myproject.toutiaonews.dao.LoginTicketDAO;
 import com.myproject.toutiaonews.dao.NewsDAO;
 import com.myproject.toutiaonews.dao.UserDAO;
+import com.myproject.toutiaonews.model.Comment;
+import com.myproject.toutiaonews.model.EntityType;
 import com.myproject.toutiaonews.model.LoginTicket;
 import com.myproject.toutiaonews.model.News;
 import com.myproject.toutiaonews.model.User;
@@ -34,6 +37,9 @@ public class InitDatabaseTests {
     @Autowired
     LoginTicketDAO loginTicketDAO;
 
+    @Autowired
+    CommentDAO commentDAO;
+
     @Test
     public void initData() {
         Random random = new Random();
@@ -57,6 +63,18 @@ public class InitDatabaseTests {
             news.setLink(String.format("http://www.nowcoder.com/%d.html", i));
             newsDAO.addNews(news);
 
+            // 给每条资讯默认添加3条评论
+            for (int j = 0; j < 3; j++) {
+                Comment comment = new Comment();
+                comment.setUserId(i + 1);
+                comment.setEntityId(news.getId());
+                comment.setEntityType(EntityType.ENTITY_NEWS);
+                comment.setCreatedDate(new Date());
+                comment.setStatus(0);
+                comment.setContent("这里是一个评论啊！" + String.valueOf(j));
+                commentDAO.addComment(comment);
+            }
+
             user.setPassword("newpassword");
             userDAO.updatePassword(user);
 
@@ -64,7 +82,7 @@ public class InitDatabaseTests {
             ticket.setStatus(0);
             ticket.setUserId(i + 1);
             ticket.setExpired(date);
-            ticket.setTicket(String.format("TICKET%d", i+1));
+            ticket.setTicket(String.format("TICKET%d", i + 1));
             loginTicketDAO.addTicket(ticket);
 
             loginTicketDAO.updateStatus(ticket.getTicket(), 2);
@@ -76,6 +94,8 @@ public class InitDatabaseTests {
 
         Assert.assertEquals(1, loginTicketDAO.selectByTicket("TICKET1").getUserId());
         Assert.assertEquals(2, loginTicketDAO.selectByTicket("TICKET1").getStatus());
+
+        Assert.assertNotNull(commentDAO.selectByEntity(1, EntityType.ENTITY_NEWS).get(0));
 
     }
 }

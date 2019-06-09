@@ -58,4 +58,8 @@ public class NewsService {
         // 将生成的图片路径下发给客户端
         return ToutiaoUtil.TOUTIAO_DOMAIN + "image?name=" + fileName;
     }
+
+    public int updateCommentCount(int id, int count) {
+        return newsDAO.updateCommentCount(id, count);
+    }
 }
