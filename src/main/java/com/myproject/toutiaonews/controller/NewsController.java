@@ -6,6 +6,7 @@ import com.myproject.toutiaonews.model.HostHolder;
 import com.myproject.toutiaonews.model.News;
 import com.myproject.toutiaonews.model.ViewObject;
 import com.myproject.toutiaonews.service.CommentService;
+import com.myproject.toutiaonews.service.LikeService;
 import com.myproject.toutiaonews.service.NewsService;
 import com.myproject.toutiaonews.service.QiniuService;
 import com.myproject.toutiaonews.service.UserService;
@@ -52,6 +53,9 @@ public class NewsController {
     @Autowired
     HostHolder hostHolder;
 
+    @Autowired
+    LikeService likeService;
+
     private static final Logger logger = LoggerFactory.getLogger(NewsController.class);
 
     // 向服务器请求展示图片
@@ -62,7 +66,7 @@ public class NewsController {
             response.setContentType("image/jpeg");
             // 客户端根据之前服务端下发的图片地址去读取图片
             // 服务端响应的图片的二进制流，到response的输出流
-            StreamUtils.copy(new FileInputStream(new File(ToutiaoUtil.IMAGE_DIR + imageName)), response.getOutputStream());
+            StreamUtils.copy(new FileInputStream(new File(ToutiaoUtil.QINIU_DOMAIN_PREFIX + imageName)), response.getOutputStream());
         } catch (Exception e) {
             logger.error("读取图片错误" + e.getMessage());
         }
@@ -118,7 +122,13 @@ public class NewsController {
         try {
             News news = newsService.getById(newsId);
             if (news != null) {
-                List<Comment>  comments = commentService.getCommentsByEntity(news.getId(), EntityType.ENTITY_NEWS);
+                int localUserId = hostHolder.getUser() != null ? hostHolder.getUser().getId() : 0;
+                if (0 != localUserId) {
+                    model.addAttribute("like", likeService.getLikeStatus(localUserId, EntityType.ENTITY_NEWS, news.getId()));
+                } else {
+                    model.addAttribute("like", 0);
+                }
+                List<Comment> comments = commentService.getCommentsByEntity(news.getId(), EntityType.ENTITY_NEWS);
                 List<ViewObject> commentVos = new ArrayList<>();
                 for (Comment comment : comments) {
                     ViewObject vos = new ViewObject();

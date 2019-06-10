@@ -1,7 +1,5 @@
 package com.myproject.toutiaonews.utils;
 
-
-import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +15,7 @@ public class ToutiaoUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(ToutiaoUtil.class);
 
-    public static String QINIU_DOMAIN_PREFIX = "http://7xsetu.com1.z0.glb.clouddn.com/";
+    public static String QINIU_DOMAIN_PREFIX = "http://pst94snkp.bkt.clouddn.com/";
     public static String TOUTIAO_DOMAIN = "http://127.0.0.1:8080/";
     public static String IMAGE_DIR = "G:/uploadImage/";   // 注意路径的书写格式，需要使用'/'，并且'/'结尾
     public static String[] IMAGE_FILE_EXT = new String[]{"png", "jpg", "bmp", "jpeg"};

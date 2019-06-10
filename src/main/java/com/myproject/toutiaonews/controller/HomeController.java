@@ -1,8 +1,10 @@
 package com.myproject.toutiaonews.controller;
 
+import com.myproject.toutiaonews.model.EntityType;
 import com.myproject.toutiaonews.model.HostHolder;
 import com.myproject.toutiaonews.model.News;
 import com.myproject.toutiaonews.model.ViewObject;
+import com.myproject.toutiaonews.service.LikeService;
 import com.myproject.toutiaonews.service.NewsService;
 import com.myproject.toutiaonews.service.UserService;
 import org.slf4j.Logger;
@@ -36,15 +38,24 @@ public class HomeController {
     @Autowired
     HostHolder hostHolder;
 
+    @Autowired
+    LikeService likeService;
+
     private List<ViewObject> getNews(int userId, int offset, int limit) {
         List<News> newsList = newsService.getLatestNews(userId, offset, limit);
-
+        int localUserId = hostHolder.getUser() != null ? hostHolder.getUser().getId() : 0;
         // ViewObject作为整体元素传递，ViewObject其实就是一个Map
         List<ViewObject> vos = new ArrayList<>();
         for (News news : newsList) {
             ViewObject vo = new ViewObject();
             vo.set("news", news); // key=news,value=news对象
             vo.set("user", userService.getUser(news.getUserId())); // 同一个news对象的userId
+
+            if (0 != localUserId) {
+                vo.set("like", likeService.getLikeStatus(localUserId, EntityType.ENTITY_NEWS, news.getId()));
+            } else {
+                vo.set("like", 0);
+            }
             vos.add(vo); // 放入返回结果的list数组
         }
         return vos;
@@ -55,8 +66,13 @@ public class HomeController {
      * 可以获取到hostHolder，根据不同用户个性化展示首页
      */
     @RequestMapping(path = {"/", "/index"}, method = {RequestMethod.GET, RequestMethod.POST})
-    public String index(Model model) { // 将属性传入模板引擎
+    public String index(Model model,
+                        @RequestParam(value = "pop", defaultValue = "0") int pop) { // 将属性传入模板引擎
         model.addAttribute("vos", getNews(0, 0, 10)); // userId指定为0，说明显示所有用户发表的新闻
+        if (hostHolder.getUser() != null) {
+            pop = 0;
+        }
+        model.addAttribute("pop", pop);
         return "home";
     }
 

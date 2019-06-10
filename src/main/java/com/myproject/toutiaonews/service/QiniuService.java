@@ -55,9 +55,10 @@ public class QiniuService {
             // 调用put方法上传
             Response res = uploadManager.put(file.getBytes(), fileName, getUpToken());
             // 打印返回的信息，调试专用
-            System.out.println(res.bodyString());
+            //System.out.println(res.bodyString());
             if (res.isOK() && res.isJson()) {
-                return QINIU_IMAGE_DOMAIN + JSONObject.parseObject(res.bodyString()).get("key");
+                //return QINIU_IMAGE_DOMAIN  + "image?name=" + JSONObject.parseObject(res.bodyString()).get("key");
+                return QINIU_IMAGE_DOMAIN  + JSONObject.parseObject(res.bodyString()).get("key");
             } else {
                 logger.error("七牛异常：" + res.bodyString());
                 return null;
