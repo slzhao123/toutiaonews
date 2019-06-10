@@ -48,7 +48,6 @@ public class LoginController {
                     cookie.setMaxAge(5 * 24 * 3600); // 记住5天，当然也可以跟后台对应上
                 }
                 response.addCookie(cookie);
-
                 return ToutiaoUtil.getJSONString(0, "注册成功");
             } else {
                 return ToutiaoUtil.getJSONString(1, map);
@@ -66,25 +65,28 @@ public class LoginController {
     @ResponseBody
     public String login(Model model, @RequestParam("username") String username,
                         @RequestParam("password") String password,
-                        @RequestParam(value="rember", defaultValue = "0") int rememberme) {
+                        @RequestParam(value = "rember", defaultValue = "0") int rememberme,
+                        HttpServletResponse response) {
         try {
-            Map<String, Object> map = userService.register(username, password);
+            Map<String, Object> map = userService.login(username, password);
             if (map.containsKey("ticket")) {
                 Cookie cookie = new Cookie("ticket", map.get("ticket").toString());
                 cookie.setPath("/");
                 if (rememberme > 0) {
-                    cookie.setMaxAge(3600*24*5);
+                    cookie.setMaxAge(3600 * 24 * 5);
                 }
-                return ToutiaoUtil.getJSONString(0, "注册成功");
+                response.addCookie(cookie);
+                return ToutiaoUtil.getJSONString(0, "登录成功");
             } else {
                 return ToutiaoUtil.getJSONString(1, map);
             }
 
         } catch (Exception e) {
-            logger.error("注册异常" + e.getMessage());
-            return ToutiaoUtil.getJSONString(1, "注册异常");
+            logger.error("登录异常" + e.getMessage());
+            return ToutiaoUtil.getJSONString(1, "登录异常");
         }
     }
+
 
     @RequestMapping(path = {"/logout/"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String logout(@CookieValue("ticket") String ticket) {  // 从Cookie里面读取ticket
