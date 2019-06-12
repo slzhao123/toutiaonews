@@ -90,6 +90,8 @@ public class UserService {
             return map;
         }
 
+        map.put("userId", user.getId());
+
         // 给用户下发一个ticket
         String ticket = addLoginTicket(user.getId());
         map.put("ticket", ticket);

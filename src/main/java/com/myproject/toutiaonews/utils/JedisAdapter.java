@@ -20,7 +20,7 @@ public class JedisAdapter implements InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(JedisAdapter.class);
 
-    private Jedis jedis = null;
+    //private Jedis jedis = null;
     private JedisPool pool = null;
 
     @Override
@@ -175,10 +175,12 @@ public class JedisAdapter implements InitializingBean {
         }
     }
 
+    // 使用redis来序列化，保存一个对象
     public void setObject(String key, Object obj) {
         set(key, JSON.toJSONString(obj));
     }
 
+    // 反序列化，使用泛型，需要指定是什么类型
     public <T> T getObject(String key, Class<T> clazz) {
         String value = get(key);
         if (value != null) {

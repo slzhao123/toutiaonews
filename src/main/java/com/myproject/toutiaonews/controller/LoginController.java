@@ -1,5 +1,8 @@
 package com.myproject.toutiaonews.controller;
 
+import com.myproject.toutiaonews.async.EventModel;
+import com.myproject.toutiaonews.async.EventProducer;
+import com.myproject.toutiaonews.async.EventType;
 import com.myproject.toutiaonews.service.NewsService;
 import com.myproject.toutiaonews.service.UserService;
 import com.myproject.toutiaonews.utils.ToutiaoUtil;
@@ -32,6 +35,9 @@ public class LoginController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    EventProducer eventProducer;
 
     @RequestMapping(path = {"/reg/"}, method = {RequestMethod.GET, RequestMethod.POST})
     @ResponseBody
@@ -76,6 +82,11 @@ public class LoginController {
                     cookie.setMaxAge(3600 * 24 * 5);
                 }
                 response.addCookie(cookie);
+                eventProducer.fireEvent(new
+                        EventModel(EventType.LOGIN)
+                        .setActorId((int)map.get("userId"))
+                        .setExt("username", username)
+                        .setExt("email", "1324731774@qq.com"));
                 return ToutiaoUtil.getJSONString(0, "登录成功");
             } else {
                 return ToutiaoUtil.getJSONString(1, map);
