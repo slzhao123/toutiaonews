@@ -16,7 +16,8 @@ public class JedisTest {
         System.out.println(String.format("%d,%s", index, obj.toString()));
     }
 
-    public static void main(String[] args) {
+
+    public static void maintest(String[] args) {
         Jedis jedis = new Jedis();
         jedis.flushAll();  // 先删除所有数据
 
